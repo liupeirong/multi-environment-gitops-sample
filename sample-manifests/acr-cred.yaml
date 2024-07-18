@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: acr-cred
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: |- #base64 encode docker config json like following
+    "auths":{
+      "myacr.azurecr.io":{
+        "auth":"username:password | b64enc"
+      }
+    }
+---

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "busybox.fullname" . }}
+  labels:
+    app: busybox
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: busybox
+  template:
+    metadata:
+      labels:
+        app: busybox
+    spec:
+      serviceAccountName: {{ include "busybox.serviceAccountName" . }}
+      imagePullSecrets:
+      - name: acr-cred
+      containers:
+        - name: busybox-container
+          image: "{{ .Values.containerRegistry.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh", "-c", 'echo hello; sleep infinity']
+          volumeMounts:
+          - name: secrets-store-inline
+            mountPath: "/mnt/secrets-store"
+            readOnly: true
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "busybox-secret-provider"
+            nodePublishSecretRef:
+              name: secret-store-creds

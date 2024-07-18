@@ -1,0 +1,13 @@
+siteName: hou
+greeting: "dynamic site config for hou"
+linesOnSite:
+  - name: hou01
+    uiEnabled: false
+  - name: hou02
+    uiEnabled: true
+    securityGroup: teamA
+  - name: hou03
+    uiEnabled: true
+    securityGroup: teamA
+  - name: hou04
+    uiEnabled: false

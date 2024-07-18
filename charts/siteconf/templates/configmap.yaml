@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: site-app-config
+data:
+  siteName: {{ .Values.siteName }}
+  greeting: {{ .Values.greeting }}
+  {{- $backend_hosts := list }}
+  {{- $security_groups := list }}
+    {{- range $line := .Values.linesOnSite }}
+      {{- if $line.uiEnabled }}
+        {{- $backend_hosts = append $backend_hosts (print "backend-endpoint-" $line.name) }}
+        {{- $security_groups = append $security_groups $line.securityGroup }}
+      {{- end }}
+    {{- end }}
+  backend_hosts: {{ $backend_hosts | toJson | quote}}
+  security_groups: {{ $security_groups | uniq | toJson | quote}}
+

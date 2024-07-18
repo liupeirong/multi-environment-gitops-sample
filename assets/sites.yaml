@@ -1,0 +1,16 @@
+sites:
+  home:
+    name: home 
+    fullName: dev-home-office
+    region: asia
+    businessUnit: farming
+  hou:
+    name: hou
+    fullName: houston
+    region: na
+    businessUnit: automotive
+  sea:
+    name: sea
+    fullName: seattle
+    region: na
+    businessUnit: bakery

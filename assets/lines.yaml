@@ -1,0 +1,37 @@
+lines:
+  dev:
+    name: dev
+    site: home
+    isLead: true
+  hou01:
+    name: hou01
+    site: hou
+    isLead: true
+  hou02:
+    name: hou02
+    site: hou
+    isLead: false
+  hou03:
+    name: hou03
+    site: hou
+    isLead: false
+  hou04:
+    name: hou04
+    site: hou
+    isLead: false
+  sea01:
+    name: sea01
+    site: sea
+    isLead: false
+  sea02:
+    name: sea02
+    site: sea
+    isLead: true
+  sea03:
+    name: sea03
+    site: sea
+    isLead: false
+  sea04:
+    name: sea04
+    site: sea
+    isLead: false

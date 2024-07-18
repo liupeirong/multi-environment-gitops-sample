@@ -1,0 +1,7 @@
+regions:
+  asia:
+    name: ap
+    fullName: Asia Pacific
+  na:
+    name: na
+    fullName: North America

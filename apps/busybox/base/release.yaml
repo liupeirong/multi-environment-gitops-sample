@@ -1,0 +1,23 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: busybox
+spec:
+  releaseName: busybox
+  interval: 12m
+  install:
+    disableWait: true
+  upgrade:
+    disableWait: true
+  chart:
+    spec:
+      chart: charts/busybox
+      reconcileStrategy: Revision
+      sourceRef:
+        kind: GitRepository
+        name: busyboxcfg
+      valuesFiles:
+      - charts/busybox/values.yaml
+      - assets/lines.yaml
+      - assets/sites.yaml
+      - assets/regions.yaml

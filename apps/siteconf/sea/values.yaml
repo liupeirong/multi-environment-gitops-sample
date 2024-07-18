@@ -1,0 +1,14 @@
+siteName: sea
+greeting: "dynamic shared ui for sea"
+linesOnSite:
+  - name: sea01
+    uiEnabled: true
+    securityGroup: teamA
+  - name: sea02
+    uiEnabled: true
+    securityGroup: teamA
+  - name: sea03
+    uiEnabled: true
+    securityGroup: teamB
+  - name: sea04
+    uiEnabled: false

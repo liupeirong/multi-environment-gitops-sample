@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: busyboxenv
+data:
+  lineName: {{ .Values.lineName }}
+  itGreeting: {{ .Values.itGreeting }}
+  otGreeting: {{ .Values.otGreeting }}
+  {{- $sites := .Values.sites -}}
+  {{- $regions := .Values.regions -}}
+  {{- with ( get .Values.lines .Values.lineName ) }}
+  isLeadLine: {{ .isLead | quote }}
+  {{- with ( get $sites .site ) }}
+  site: {{ .name }}
+  businessUnit: {{ .businessUnit }}
+  {{- with ( get $regions .region ) }}
+  region: {{ .fullName }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
+
