@@ -33,18 +33,18 @@ There are two sample apps in this repo:
 ### Repo Structure
 
 ```txt
-|__apps          # contains the base and customized config for each app 
-|____app1        # app1 corresponds to the helm chart in charts folder
-|______base      # base configuration for the app
-|______env1      # configuration override for environment 1 
-|______env2      # configuration override for environment 2
+|__apps             # contains the base and customized config for each app 
+|____app1           # app1 corresponds to the helm chart in charts folder
+|______base         # base configuration for the app
+|______env1         # configuration override for environment 1 
+|______env2         # configuration override for environment 2
 |______...
 |____app2
 |______base
 |______env1
 |______env2
 |______...
-|__assets        # attributes of assets that don't change by apps just an example
+|__assets           # attributes of assets that don't change by apps just an example
 |____regions.yaml 
 |____sites.yaml   
 |____lines.yaml
