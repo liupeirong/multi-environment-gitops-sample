@@ -4,10 +4,4 @@ metadata:
   name: acr-cred
 type: kubernetes.io/dockerconfigjson
 data:
-  .dockerconfigjson: |- #base64 encode docker config json like following
-    "auths":{
-      "myacr.azurecr.io":{
-        "auth":"username:password | b64enc"
-      }
-    }
----
+  .dockerconfigjson: #baseb4 encode {"auths":{"your_acr.azurecr.io":{"auth":"<base64 encoded username:password>"}}}

@@ -1,9 +1,9 @@
 # Default values for busybox.
 
 containerRegistry:
-  registry: acrtrkwestus201.azurecr.io
+  registry: my_acr.azurecr.io
 
-tenantId: 73090b1d-064f-4894-b7aa-8f524789e3ca
+tenantId: my_tenant_id
 
 image:
   repository: mybusybox

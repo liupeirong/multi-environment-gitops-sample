@@ -102,13 +102,20 @@ You can hydrate the helm templates on the local machine without deploying to a c
  in the Azure portal.
 - Flux [multi-tenancy](https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/conceptual-gitops-flux2#multi-tenancy) is enabled by default.
 
+To deploy to your own environment, make sure you configured the following values:
+
+- Container Registry, Tenant ID, Repository, and Tag in [charts/busybox/values.yaml](./charts/busybox/values.yaml)
+- Key Vault name in the environment you want to deploy to [apps/busybox/dev/values.yaml](./apps/busybox/dev/values.yaml)
+- Create the [secrets](charts/busybox/templates/secretproviderclass.yaml#L14) in Key Vault
+- Create the credentials for your [Container Registry](./sample-manifests/acr-cred.yaml) and [Key Vault](./sample-manifests/akv-cred.yaml)
+
 You can [configure Arc GitOps to deploy your application either from the portal](https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/tutorial-use-gitops-flux2?tabs=azure-portal#apply-a-flux-configuration)
  or using az cli as the following:
 
 ```bash
 az k8s-configuration flux create -g <resource-group> -c <arc-cluster> -n <configuration-name> --namespace busyboxns -t connectedClusters --scope namespace -u <url-to-this-repo> --branch main --kustomization name=<kustomization-name> path=./apps/busybox/<environment-name> prune=false --https-user <git-username> --https-key <git-password>
 
-az k8s-configuration flux create -g <resource-group> -c <arc-cluster> -n <configuration-name> -t connectedClusters --scope cluster -u <url-to-this-cluster> --branch main --kustomization name=<kustomization-name> path=./apps/siteconf/<environment-name> prune=false --https-user <git-username> --https-key <git-password>
+az k8s-configuration flux create -g <resource-group> -c <arc-cluster> -n <configuration-name> --namespace siteconfns -t connectedClusters --scope cluster -u <url-to-this-cluster> --branch main --kustomization name=<kustomization-name> path=./apps/siteconf/<environment-name> prune=false --https-user <git-username> --https-key <git-password>
 ```
 
 This will create `GitRepository` and `Kustomization` objects for Flux to
@@ -165,6 +172,8 @@ To troubleshoot deployment failure, you can use these commands whether or
 kubectl describe kustomization <name> -n <namespace>
 # to check a helmrelease, this could provide more info than get -o yaml
 kubectl describe hr <release> -n <namespace>
+# to check events
+kubectl events -n <namespace>
 
 # to check which reconcilation failed
 flux get all -n <namespace> --status-selector ready=false
