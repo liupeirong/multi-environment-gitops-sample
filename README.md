@@ -2,13 +2,14 @@
 
 This sample GitOps repo demonstrates a way to organize Kubernetes applications packaged in Helm charts for different environments
  such as dev, test, prod, and also in the case of industrial scenarios, for different manufacturing plants or retail stores,
- each requiring some levels of customization of configurations. It is inspired by this [flux2-kustomize-helm-example](https://github.com/fluxcd/flux2-kustomize-helm-example/tree/main)
- and its derived [gitops-flux2-kustomize-helm multi-tenant sample using Azure Arc GitOps extension](https://github.com/Azure/gitops-flux2-kustomize-helm-mt).
+ each requiring some levels of customization of configurations. It is inspired by this repo
+ [flux2-kustomize-helm-example](https://github.com/fluxcd/flux2-kustomize-helm-example/tree/main)
+ and its derived repo [gitops-flux2-kustomize-helm multi-tenant sample using Azure Arc GitOps extension](https://github.com/Azure/gitops-flux2-kustomize-helm-mt).
  What this repo adds is how to manage configurations
  when you have potentially a hundred plants or stores to deploy applications to.
 
 When the number of environments reaches hundreds or thousands, just managing that many folders could be
- challenging. Other solutions leveraging a configuration databases may be necessary. This is beyond the scope of this sample.
+ challenging. Other solutions, for example, leveraging a configuration databases may be necessary. This is beyond the scope of this sample.
 
 ## What's in the repo?
 
@@ -32,29 +33,28 @@ There are two sample apps in this repo:
 ### Repo Structure
 
 ```txt
-|- apps          # contains the base and customized config for each app 
-|-   app1        # app1 corresponds to the helm chart in charts folder
-|-     base      # base configuration for the app
-|-     env1      # configuration override for environment 1 
-|-     env2      # configuration override for environment 2
-|-     ...
-|-   app2
-|-     base
-|-     env1
-|-     env2
-|-     ...
-|- assets         # attributes of assets that don't change by apps
-|-                # just an example, you can define your own.
-|-   regions.yaml 
-|-   sites.yaml   
-|-   lines.yaml
-|- charts           # helm charts for apps
-|-   chart_for_app1 # chart folder for app1
-|-   chart_for_app2 # chart folder for app2
-|-   ...
-|- sample-manifests # sample manifests to create secrets outside of gitops
-|-   acr-cred.yaml  # create secrets for Azure Container Registry
-|-   akv-cred.yaml  # create secrets for Azure Key Vault
+|__apps          # contains the base and customized config for each app 
+|____app1        # app1 corresponds to the helm chart in charts folder
+|______base      # base configuration for the app
+|______env1      # configuration override for environment 1 
+|______env2      # configuration override for environment 2
+|______...
+|____app2
+|______base
+|______env1
+|______env2
+|______...
+|__assets        # attributes of assets that don't change by apps just an example
+|____regions.yaml 
+|____sites.yaml   
+|____lines.yaml
+|__charts           # helm charts for apps
+|____chart_for_app1 # chart folder for app1
+|____chart_for_app2 # chart folder for app2
+|____...
+|__sample-manifests # sample manifests to create secrets outside of gitops
+|____acr-cred.yaml  # create secrets for Azure Container Registry
+|____akv-cred.yaml  # create secrets for Azure Key Vault
 ```
 
 ## How is configuration customized for each environment?
@@ -72,7 +72,7 @@ multiple environments in a scalable way:
 
 To put it all together,
 
-- The Flux HelmRelease definition has a [valuesFiles](./apps/busybox/base/release.yaml)
+- The Flux HelmRelease definition has a [valuesFiles](./apps/busybox/base/release.yaml#L19)
  section where you can specify a list of values files.
 - The [kustomization.yaml](./apps/busybox/dev/kustomization.yaml) in each environment
  appends the values files for its specific environment to the base `valuesFiles`.
@@ -98,7 +98,7 @@ You can hydrate the helm templates on the local machine without deploying to a c
 - Flux manifests are stored as resources in Azure instead of `.flux-system`
  in the GitOps repo.
 - Azure provides a central view of Flux configuration objects such as
- `GitRepository`, `Kustomization`, `HelmRelease`, and their reconciliation
+ `GitRepository`, `Kustomization`, `HelmRelease`, and their reconciliation status
  in the Azure portal.
 - Flux [multi-tenancy](https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/conceptual-gitops-flux2#multi-tenancy) is enabled by default.
 
@@ -118,7 +118,7 @@ This will create `GitRepository` and `Kustomization` objects for Flux to
  On the other hand, we scoped the configuration for siteconf to `cluster`,
  and [a namespace is created](./apps/siteconf/base/kustomization.yaml#L5) during the deployment.
 
-Also note that by default, Arc GitOps enables multi-tenancy. So the `GitRepository`s
+Also note that by default, Arc GitOps enables multi-tenancy. So the `GitRepository`
  used by all the deployment manifests must be in this namespace. For example,
  `sourceRef` in [release.yaml](./apps/busybox/base/release.yaml#L16) cannot be in
  another namespace, and the `GitRepository` name, `busyboxcfg`, must match the
@@ -126,19 +126,19 @@ Also note that by default, Arc GitOps enables multi-tenancy. So the `GitReposito
 
 ### Secrets Management
 
-There are multiple ways to manage secrets in Kubernetes with Flux. None is easy.
+There are multiple ways to manage secrets to be used with with Flux. None is easy.
 
 _Azure Key Vault_
 
-While Arc enabled cluster can install [Azure Key Vault extension](https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/tutorial-akv-secrets-provider) to store secrets,
+While Arc enabled cluster can leverage [Azure Key Vault extension](https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/tutorial-akv-secrets-provider) to store secrets,
  this extension works based on a CSI driver. So the workload will need to mount
  a CSI volume into a pod to access the secrets. This can't be used for secrets
- such as credentials for container registries that needs to pull container
+ such as credentials for container registries that need to pull container
  images to create a pod to begin with.
 
 _SOPS_
 
-While SOPS has Azure Key Vault integration and Flux supports SOPS, it requires
+While SOPS has Azure Key Vault integration, and Flux supports SOPS, it requires
  Workload Identity to be enabled in the cluster. Workload Identity is not yet
  available for Arc enabled Kubernetes clusters at the time of this writing.
 
@@ -150,10 +150,8 @@ In this sample, to keep things simple,
 
 - for secrets that are used outside of pods, create them as Kubernetes secrets outside
  of Flux. For example,
-
   - [credential for pulling images from container registry](./sample-manifests/acr-cred.yaml)
   - [credential for a service principal to access Key Vault](./sample-manifests/akv-cred.yaml)
-
 - for secrets accessed by pods, use _Azure Key Vault_ extension as shown
  in the busybox Helm chart.
 
@@ -185,10 +183,8 @@ flux reconcile hr <release> --with-source -n <namespace>
 
 # If a deployment reached ProgressDeadlineExceeded due to bad imagePullCredential
 # or missing resources like service account, it won't redeploy even after you
-# fixed the missing resource.
-# Manually changed/deleted resources won't be reconciled by HelmRelease.
-# If you delete a deployment, you will need to run the following to get the
-# deployment again.
+# fixed the missing resource. You will need to run the following to fix the
+# deployment.
 flux suspend hr <release> -n <namespace>
 flux resume hr <release> -n <namespace>
 ```
